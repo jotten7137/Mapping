@@ -45,21 +45,52 @@ function getColor(color){
     "#e4edd7";
 }
 
+
 //Map Framework
-function createMap(earthquakes){
-        var lightMap = {"Light Map": L.tileLayer("https://api.mapbox.com/styles/v1/jotten7137/cjsl4lqyw3i5w1fpjuyb5uyc5.html?fresh=true&title=true&access_token=pk.eyJ1Ijoiam90dGVuNzEzNyIsImEiOiJjanNmZHdva2gwczBpNDRzN3UycXlhN2V0In0.y5lbUW6xlSTXjkLm86QthQ#13.6/37.784020/-122.403944/0"),
-        attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
-        accessToken: API_KEY,
-        };
-        
-        var myMap = L.map("map",{
-            center:[41.5,81.69],
-            zoom: 3,
-            layers:[earthquakes,lightMap]
-            });
-        L.control.layers(myMap,{
-            collapsed:false
-        }).addTo(myMap);
+function createMap(earthquakes) {
+
+    // Define streetmap and darkmap layers
+    var streetmap = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
+      attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+      maxZoom: 18,
+      id: "mapbox.streets",
+      accessToken: API_KEY
+    });
+  
+    var darkmap = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
+      attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+      maxZoom: 18,
+      id: "mapbox.dark",
+      accessToken: API_KEY
+    });
+  
+    // Define a baseMaps object to hold our base layers
+    var baseMaps = {
+      "Street Map": streetmap,
+      "Dark Map": darkmap
+    };
+  
+    // Create overlay object to hold our overlay layer
+    var overlayMaps = {
+      Earthquakes: earthquakes
+    };
+  
+    // Create our map, giving it the streetmap and earthquakes layers to display on load
+    var myMap = L.map("map", {
+      center: [
+        40.5, -81.69
+      ],
+      zoom: 6,
+      layers: [streetmap, earthquakes]
+    });
+  
+    // Create a layer control
+    // Pass in our baseMaps and overlayMaps
+    // Add the layer control to the map
+    L.control.layers(baseMaps, overlayMaps, {
+      collapsed: false
+    }).addTo(myMap);
+
 
 //Legend
     var legend = L.control({position:'bottomleft'});
